@@ -38,6 +38,9 @@ export default function KanjiDetail({ entry, learned, onToggleLearned, onClose }
         </div>
 
         <div className="kanji-detail-readings">
+          <div className="korean-hun-eum">
+            <strong>한국 한자음</strong> {entry.koreanHunEum ?? '-'}
+          </div>
           <div>
             <strong>음독</strong> {entry.onReadings.join('、') || '-'}
           </div>

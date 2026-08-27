@@ -7,6 +7,7 @@ import path from 'node:path';
 
 const require = createRequire(import.meta.url);
 const kanji = require('kanji-data');
+const hanjadict = require('@seyoungsong/hanjadict');
 
 const LEVELS = [3, 4];
 const OUT_DATA = path.resolve('src/data/kanji.json');
@@ -68,6 +69,7 @@ async function main() {
         meanings: meta.meanings,
         onReadings: meta.on_readings,
         kunReadings: meta.kun_readings,
+        koreanHunEum: hanjadict.lookup(char),
         grade: meta.grade,
         words,
         svg: `/kanjivg/${svgFile}`,

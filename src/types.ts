@@ -12,6 +12,7 @@ export interface KanjiEntry {
   meanings: string[];
   onReadings: string[];
   kunReadings: string[];
+  koreanHunEum: string | null;
   grade: number | null;
   words: ExampleWord[];
   svg: string;

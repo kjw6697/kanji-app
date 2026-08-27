@@ -30,7 +30,8 @@ function App() {
         entry.kanji.includes(q) ||
         entry.meanings.some((m) => m.toLowerCase().includes(q.toLowerCase())) ||
         entry.onReadings.some((r) => r.includes(q)) ||
-        entry.kunReadings.some((r) => r.includes(q))
+        entry.kunReadings.some((r) => r.includes(q)) ||
+        (entry.koreanHunEum?.includes(q) ?? false)
       );
     });
   }, [query, filter, level, isLearned]);
