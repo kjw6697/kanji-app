@@ -5,6 +5,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { loadDefaultJapaneseParser } from 'budoux';
+import { buildTokenizer, toSegments } from './lib/furigana.mjs';
 
 const KANJI_DATA = path.resolve('src/data/kanji.json');
 const OUT_DATA = path.resolve('src/data/sentences.json');
@@ -31,6 +32,7 @@ async function fetchCandidates(kanjiChar) {
 
 async function main() {
   const kanjiEntries = JSON.parse(await fs.readFile(KANJI_DATA, 'utf-8'));
+  const tokenizer = await buildTokenizer();
   const seenText = new Set();
   const sentences = [];
 
@@ -53,8 +55,9 @@ async function main() {
       const ko = koCandidates.find((t) => t.lang === 'kor')?.text?.trim();
       if (!ko) continue;
 
-      const tokens = tokenize(ja);
-      if (tokens.length < MIN_TOKENS || tokens.length > MAX_TOKENS) continue;
+      const chunks = tokenize(ja);
+      if (chunks.length < MIN_TOKENS || chunks.length > MAX_TOKENS) continue;
+      const tokens = chunks.map((text) => ({ text, segments: toSegments(tokenizer, text) }));
 
       seenText.add(ja);
       sentences.push({ ja, ko, tokens, sourceKanji: entry.kanji });

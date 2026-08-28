@@ -113,11 +113,24 @@
 
 .sentence-tile {
   font-size: 18px;
-  padding: 10px 14px;
+  padding: 16px 14px 10px;
   border-radius: 10px;
   border: 1px solid var(--border);
   background: var(--surface);
   color: var(--text-h);
+  line-height: 1.8;
+}
+
+.sentence-tile rt {
+  font-size: 10px;
+  color: var(--accent);
+  user-select: none;
+}
+
+.feedback-answer-token {
+  display: inline-block;
+  margin: 0 2px;
+  line-height: 2.2;
 }
 
 .sentence-tile:hover {

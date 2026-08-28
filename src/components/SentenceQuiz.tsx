@@ -1,10 +1,20 @@
 import { useMemo, useState } from 'react';
 import sentenceData from '../data/sentences.json';
 
+interface Segment {
+  text: string;
+  reading?: string;
+}
+
+interface SentenceToken {
+  text: string;
+  segments: Segment[];
+}
+
 interface SentenceItem {
   ja: string;
   ko: string;
-  tokens: string[];
+  tokens: SentenceToken[];
   sourceKanji: string;
 }
 
@@ -31,11 +41,28 @@ function pickSentence(excludeJa?: string): SentenceItem {
 
 interface Tile {
   id: number;
-  text: string;
+  token: SentenceToken;
 }
 
 function makePool(sentence: SentenceItem): Tile[] {
-  return shuffle(sentence.tokens.map((text, id) => ({ id, text })));
+  return shuffle(sentence.tokens.map((token, id) => ({ id, token })));
+}
+
+function RubyText({ segments }: { segments: Segment[] }) {
+  return (
+    <>
+      {segments.map((seg, i) =>
+        seg.reading ? (
+          <ruby key={i}>
+            {seg.text}
+            <rt>{seg.reading}</rt>
+          </ruby>
+        ) : (
+          <span key={i}>{seg.text}</span>
+        ),
+      )}
+    </>
+  );
 }
 
 export default function SentenceQuiz() {
@@ -46,7 +73,7 @@ export default function SentenceQuiz() {
   const [stats, setStats] = useState({ correct: 0, total: 0 });
 
   const correctOrder = useMemo(
-    () => current.tokens.map((text, id) => ({ id, text })),
+    () => current.tokens.map((token, id) => ({ id, token })),
     [current],
   );
 
@@ -99,7 +126,7 @@ export default function SentenceQuiz() {
         {answer.length === 0 && <span className="sentence-quiz-placeholder">아래 조각을 눌러 문장을 완성하세요</span>}
         {answer.map((tile) => (
           <button key={tile.id} className="sentence-tile placed" onClick={() => moveToPool(tile)}>
-            {tile.text}
+            <RubyText segments={tile.token.segments} />
           </button>
         ))}
       </div>
@@ -107,7 +134,7 @@ export default function SentenceQuiz() {
       <div className="sentence-quiz-pool">
         {pool.map((tile) => (
           <button key={tile.id} className="sentence-tile" onClick={() => moveToAnswer(tile)}>
-            {tile.text}
+            <RubyText segments={tile.token.segments} />
           </button>
         ))}
       </div>
@@ -117,7 +144,14 @@ export default function SentenceQuiz() {
           {result === 'correct' ? (
             <p className="feedback-correct">정답입니다! 🎉</p>
           ) : (
-            <p className="feedback-wrong">아쉬워요. 정답: {current.tokens.join(' ')}</p>
+            <p className="feedback-wrong">
+              아쉬워요. 정답:{' '}
+              {current.tokens.map((t, i) => (
+                <span key={i} className="feedback-answer-token">
+                  <RubyText segments={t.segments} />
+                </span>
+              ))}
+            </p>
           )}
           <button className="sentence-quiz-next" onClick={nextQuestion}>
             다음 문제 →
