@@ -4,6 +4,7 @@ import type { KanjiEntry } from './types';
 import { useProgress } from './hooks/useProgress';
 import KanjiCard from './components/KanjiCard';
 import KanjiDetail from './components/KanjiDetail';
+import SentenceQuiz from './components/SentenceQuiz';
 import './App.css';
 
 const ALL_KANJI = kanjiData as KanjiEntry[];
@@ -11,8 +12,10 @@ const LEVELS = [4, 3] as const;
 
 type Filter = 'all' | 'learned' | 'unlearned';
 type LevelFilter = 'all' | 4 | 3;
+type Mode = 'browse' | 'quiz';
 
 function App() {
+  const [mode, setMode] = useState<Mode>('browse');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState<Filter>('all');
   const [level, setLevel] = useState<LevelFilter>('all');
@@ -44,8 +47,20 @@ function App() {
           획순 애니메이션과 따라쓰기로 배우는 일본어 한자 · 총 {ALL_KANJI.length}자 · 학습 완료{' '}
           {learned.size}자
         </p>
+        <div className="mode-tabs">
+          <button className={mode === 'browse' ? 'active' : ''} onClick={() => setMode('browse')}>
+            한자 학습
+          </button>
+          <button className={mode === 'quiz' ? 'active' : ''} onClick={() => setMode('quiz')}>
+            작문 퀴즈
+          </button>
+        </div>
       </header>
 
+      {mode === 'quiz' && <SentenceQuiz />}
+
+      {mode === 'browse' && (
+        <>
       <div className="app-controls">
         <input
           className="search-input"
@@ -102,11 +117,14 @@ function App() {
           onClose={() => setSelected(null)}
         />
       )}
+        </>
+      )}
 
       <footer className="app-footer">
         획순 데이터: <a href="https://kanjivg.tagaini.net/" target="_blank" rel="noreferrer">KanjiVG</a>{' '}
         (CC BY-SA 3.0) · 한자 정보: <a href="https://kanjiapi.dev/" target="_blank" rel="noreferrer">kanjiapi.dev</a>{' '}
-        / EDRDG KANJIDIC·JMdict
+        / EDRDG KANJIDIC·JMdict · 예문: <a href="https://tatoeba.org/" target="_blank" rel="noreferrer">Tatoeba</a>{' '}
+        (CC BY 2.0 FR)
       </footer>
     </div>
   );

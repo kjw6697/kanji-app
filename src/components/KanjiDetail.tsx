@@ -23,6 +23,16 @@ export default function KanjiDetail({ entry, learned, onToggleLearned, onClose }
           <div>
             <span className="kanji-detail-char">{entry.kanji}</span>
             <span className="kanji-detail-strokes">N{entry.jlpt} · {entry.strokeCount}획</span>
+            {entry.nihongokanjiUrl && (
+              <a
+                className="external-link"
+                href={entry.nihongokanjiUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                nihongokanji.com ↗
+              </a>
+            )}
           </div>
           <div className="kanji-detail-header-actions">
             <button

@@ -13,6 +13,7 @@ export interface KanjiEntry {
   onReadings: string[];
   kunReadings: string[];
   koreanHunEum: string | null;
+  nihongokanjiUrl: string | null;
   grade: number | null;
   words: ExampleWord[];
   svg: string;

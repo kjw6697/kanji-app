@@ -8,6 +8,7 @@ import path from 'node:path';
 const require = createRequire(import.meta.url);
 const kanji = require('kanji-data');
 const hanjadict = require('@seyoungsong/hanjadict');
+const nihongokanjiMap = require('./nihongokanji-map.json');
 
 const LEVELS = [3, 4];
 const OUT_DATA = path.resolve('src/data/kanji.json');
@@ -42,6 +43,10 @@ async function main() {
         meaning: w.meanings?.[0]?.glosses?.join('; ') ?? '',
       }));
 
+      if (!nihongokanjiMap[char]) {
+        console.warn(`no nihongokanji.com mapping for ${char}`);
+      }
+
       const unicodeHex = meta.unicode.toLowerCase().padStart(5, '0');
       const svgFile = `${unicodeHex}.svg`;
       const localSvgPath = path.join(OUT_SVG_DIR, svgFile);
@@ -73,6 +78,9 @@ async function main() {
         grade: meta.grade,
         words,
         svg: `/kanjivg/${svgFile}`,
+        nihongokanjiUrl: nihongokanjiMap[char]
+          ? `https://nihongokanji.com/${nihongokanjiMap[char]}`
+          : null,
       });
     }
   }
